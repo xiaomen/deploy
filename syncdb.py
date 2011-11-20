@@ -2,7 +2,6 @@
 #coding:utf-8
 
 import web
-import json
 import logging
 from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
