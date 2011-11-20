@@ -31,7 +31,7 @@ Parameters:
         # disable nginx buffering
         web.header('X-Accel-Buffering', 'no')
 
-        i = web.input(verbose=False)
+        i = web.input(verbose=False, single=False, mysql='{}')
 
         #get app config if not exist will create it
         app_uid = get_app_uid(i.app_name)
@@ -47,6 +47,9 @@ Parameters:
             loglevel = logging.DEBUG
         else:
             loglevel = logging.INFO
+        
+        if i.single:
+            cmd += ['--single', '--mysql-config='+i.mysql]
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         logs = []
