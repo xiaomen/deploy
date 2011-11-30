@@ -31,14 +31,14 @@ Parameters:
         # disable nginx buffering
         web.header('X-Accel-Buffering', 'no')
 
-        i = web.input(verbose=False, single=False, mysql='{}')
+        i = web.input(verbose=False)
 
         #get app config if not exist will create it
         app_uid = get_app_uid(i.app_name)
 
         #cmd = ['sudo', '-u', 'sheep', '/var/sheep-farm/farm/server/bin/farm-deploy', i.app_name,
         #       i.app_url, str(app_uid)]
-        cmd = ['/var/sheep-farm/farm/server/bin/farm-deploy', i.app_name,
+        cmd = ['/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid)]
         if i.verbose:
             cmd += ['--verbose']
@@ -47,9 +47,6 @@ Parameters:
             loglevel = logging.DEBUG
         else:
             loglevel = logging.INFO
-        
-        if i.single:
-            cmd += ['--single', '--mysql-config='+i.mysql]
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         logs = []
