@@ -33,6 +33,7 @@ Parameters:
         ret = p.communicate()
         if ret[1]:
             yield ret[1]
-        yield 'Syncdb succeeded.'
+        else:
+            yield 'Syncdb succeeded.'
 
 app_syncdb = web.application(urls, locals())
