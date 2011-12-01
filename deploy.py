@@ -36,9 +36,7 @@ Parameters:
         #get app config if not exist will create it
         app_uid = get_app_uid(i.app_name)
 
-        #cmd = ['sudo', '-u', 'sheep', '/var/sheep-farm/farm/server/bin/farm-deploy', i.app_name,
-        #       i.app_url, str(app_uid)]
-        cmd = ['/usr/local/bin/farm-deploy', i.app_name,
+        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid)]
         if i.verbose:
             cmd += ['--verbose']

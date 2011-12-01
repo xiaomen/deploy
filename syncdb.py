@@ -26,8 +26,7 @@ Parameters:
 
     def POST(self):
         data = web.data()
-        #cmd = ['sudo', '-u', 'sheep', '/var/sheep-farm/farm/server/bin/farm-syncdb', data]
-        cmd = ['/var/sheep-farm/farm/server/bin/farm-syncdb', data]
+        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         for line in p.stdout:
             logger.debug(line)
