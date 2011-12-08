@@ -34,6 +34,7 @@ Parameters:
         if ret[1]:
             yield ret[1]
         else:
+            logger.info(ret[0])
             yield 'Syncdb succeeded.'
 
 app_syncdb = web.application(urls, locals())
