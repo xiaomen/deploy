@@ -6,7 +6,7 @@ import json
 import logging
 from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
-from alloc import save, load
+from alloc import get_app_uid, save, load
 
 logger = logging.getLogger(__name__)
 
