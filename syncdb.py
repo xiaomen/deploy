@@ -48,9 +48,8 @@ Parameters:
         if ret[1]:
             yield ret[1]
         else:
-            mysqlcfg = ret[0]
-            if not is_exist and mysqlcfg:
-                save(appname, 'mysql', mysqlcfg.get('passwd', ''))
+            if not is_exist and line:
+                save(appname, 'mysql', line.get('passwd', ''))
             yield 'Syncdb succeeded.'
 
 app_syncdb = web.application(urls, locals())
