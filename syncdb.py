@@ -2,8 +2,11 @@
 #coding:utf-8
 
 import web
+import json
 import logging
 from gevsubprocess import GPopen as Popen, PIPE, STDOUT
+
+from alloc import save, load
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +28,18 @@ Parameters:
 """
 
     def POST(self):
-        data = web.data()
+        data = json.loads(web.data())
+        appname = data['application']
+
+        #get app config if not exist will create it
+        get_app_uid(appname)
+        is_exist = load(appname, 'mysql')
+
+        if is_exist:
+            data['passwd'] = is_exist
+
+        data = json.dumps(data)
+
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         for line in p.stdout:
@@ -34,7 +48,9 @@ Parameters:
         if ret[1]:
             yield ret[1]
         else:
-            logger.info(ret[0])
+            mysqlcfg = ret[0]            
+            if not is_exist and mysqlcfg:
+                save(appname, 'mysql', mysqlcfg.get('passwd', ''))
             yield 'Syncdb succeeded.'
 
 app_syncdb = web.application(urls, locals())
