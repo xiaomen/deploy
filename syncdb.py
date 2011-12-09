@@ -49,7 +49,7 @@ Parameters:
             yield ret[1]
         else:
             if not is_exist and line:
-                save(appname, 'mysql', line.get('passwd', ''))
+                save(appname, 'mysql', line)
             yield 'Syncdb succeeded.'
 
 app_syncdb = web.application(urls, locals())
