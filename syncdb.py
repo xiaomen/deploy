@@ -35,6 +35,9 @@ Parameters:
         get_app_uid(appname)
         is_exist = load(appname, 'mysql')
 
+        if data.get('passwd'):
+            del data['passwd']
+
         if is_exist:
             data['passwd'] = is_exist
 
@@ -43,12 +46,12 @@ Parameters:
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         for line in p.stdout:
+            line = line.strip()
             logger.debug(line)
         ret = p.communicate()
         if ret[1]:
             yield ret[1]
         else:
-            line = line.strip()
             if not is_exist and line:
                 save(appname, 'mysql', line)
             yield 'Syncdb succeeded.'
