@@ -48,6 +48,7 @@ Parameters:
         if ret[1]:
             yield ret[1]
         else:
+            line = line.strip()
             if not is_exist and line:
                 save(appname, 'mysql', line)
             yield 'Syncdb succeeded.'
