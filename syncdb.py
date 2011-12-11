@@ -18,47 +18,42 @@ class syncdb(object):
     def GET(self):
         return """\
 POST http://deploy.xiaom.co/syncdb/
-
-Parameters:
-{
-    table1: [addition1, addition2, ..., {column1: define, ...}],
-    table2: [addition1, addition2, ..., {column1: define, ...}],
-    ...
-}
 """
 
     def POST(self):
-        data = json.loads(web.data())
-        appname = data['application']
-        verbose = data['verbose']
+        try:
+            data = json.loads(web.data())
+            appname = data['application']
+            verbose = data['verbose']
 
-        #get app config if not exist will create it
-        get_app_uid(appname)
-        is_exist = load_app_option(appname, 'mysql')
+            #get app config if not exist will create it
+            get_app_uid(appname)
+            is_exist = load_app_option(appname, 'mysql')
 
-        if data.get('passwd'):
-            del data['passwd']
+            if data.get('passwd'):
+                del data['passwd']
 
-        if is_exist:
-            data['passwd'] = is_exist
+            if is_exist:
+                data['passwd'] = is_exist
 
-        data = json.dumps(data)
+            data = json.dumps(data)
 
-        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
-        p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
-        logs = []
-        for line in p.stdout:
-            line = line.strip()
-            logger.debug(line)
-            if verbose:
-                logs.append(line)
-        ret = p.communicate()
-        if ret[1]:
-            yield ret[1]
-        else:
-            if not is_exist and line:
-                save_app_option(appname, 'mysql', line)
-            #TODO output logs
-            yield 'Syncdb succeeded.'
+            cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
+            p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
+            for line in p.stdout:
+                line = line.strip()
+                logger.debug(line)
+                if verbose:
+                    yield line
+            ret = p.communicate()
+            if ret[1]:
+                yield ret[1]
+            else:
+                if not is_exist and line:
+                    save_app_option(appname, 'mysql', line)
+                yield 'Syncdb succeeded.'
+        except:
+            logger.exception('error occured.')
+            yield 'Syncdb failed'
 
 app_syncdb = web.application(urls, locals())

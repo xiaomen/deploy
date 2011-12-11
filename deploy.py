@@ -23,12 +23,6 @@ class deploy:
     def GET(self):
         return """\
 POST http://deploy.xiaom.co/
-
-Parameters:
-    app_name
-    app_url
-    verbose
-
 """
 
     def POST(self):
