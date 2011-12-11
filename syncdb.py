@@ -6,7 +6,7 @@ import json
 import logging
 from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
-from alloc import get_app_uid, save, load
+from alloc import get_app_uid, save_app_option, load_app_option
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ Parameters:
 
         #get app config if not exist will create it
         get_app_uid(appname)
-        is_exist = load(appname, 'mysql')
+        is_exist = load_app_option(appname, 'mysql')
 
         if data.get('passwd'):
             del data['passwd']
@@ -53,7 +53,7 @@ Parameters:
             yield ret[1]
         else:
             if not is_exist and line:
-                save(appname, 'mysql', line)
+                save_app_option(appname, 'mysql', line)
             yield 'Syncdb succeeded.'
 
 app_syncdb = web.application(urls, locals())

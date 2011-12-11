@@ -25,7 +25,7 @@ def get_app_uid(appname):
         return result[0][0]
     return generate_app_uid(appname)
 
-def save(appname, option_name, value):
+def save_app_option(appname, option_name, value):
     conn = MySQLdb.connect()
     cur = conn.cursor()
     sql = r'''UPDATE `apps` SET `%s`='%s' WHERE `app_name` = '%s';'''
@@ -35,7 +35,7 @@ def save(appname, option_name, value):
     conn.close()
     return True
 
-def load(appname, option_name):
+def load_app_option(appname, option_name):
     conn = MySQLdb.connect()
     cur = conn.cursor()
     sql = r'''SELECT %s FROM `apps` WHERE `app_name` = '%s';'''
