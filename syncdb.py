@@ -24,7 +24,6 @@ POST http://deploy.xiaom.co/syncdb/
         try:
             data = json.loads(web.data())
             appname = data['application']
-            verbose = data['verbose']
 
             #get app config if not exist will create it
             get_app_uid(appname)
@@ -43,8 +42,7 @@ POST http://deploy.xiaom.co/syncdb/
             for line in p.stdout:
                 line = line.strip()
                 logger.debug(line)
-                if verbose:
-                    yield line
+
             ret = p.communicate()
             if ret[1]:
                 yield ret[1]
