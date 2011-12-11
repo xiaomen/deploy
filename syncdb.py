@@ -46,17 +46,19 @@ Parameters:
 
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
+        logs = []
         for line in p.stdout:
             line = line.strip()
             logger.debug(line)
             if verbose:
-                yield line
+                logs.append(line)
         ret = p.communicate()
         if ret[1]:
             yield ret[1]
         else:
             if not is_exist and line:
                 save_app_option(appname, 'mysql', line)
+            #TODO output logs
             yield 'Syncdb succeeded.'
 
 app_syncdb = web.application(urls, locals())
