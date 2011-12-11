@@ -7,14 +7,16 @@ import time
 
 from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
-from syncdb import app_syncdb
 from alloc import get_app_uid
+from syncdb import app_syncdb
+from dispatch import app_dispatch
 
 web.config.debug = True
 
 urls = (
     '/', 'deploy',
     '/syncdb', app_syncdb,
+    '/dispatch', app_dispatch,
 )
 
 class deploy:
