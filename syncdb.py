@@ -30,6 +30,7 @@ Parameters:
     def POST(self):
         data = json.loads(web.data())
         appname = data['application']
+        verbose = data['verbose']
 
         #get app config if not exist will create it
         get_app_uid(appname)
@@ -48,6 +49,8 @@ Parameters:
         for line in p.stdout:
             line = line.strip()
             logger.debug(line)
+            if verbose:
+                yield line
         ret = p.communicate()
         if ret[1]:
             yield ret[1]
