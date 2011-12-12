@@ -29,9 +29,8 @@ POST http://deploy.xiaom.co/statics/
 
             #get app config if not exist will create it
             get_app_uid(appname)
-            data = json.dumps(data)
 
-            cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-statics', data, configs]
+            cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-statics', appname, json.dumps(configs)]
             p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=open('/dev/null'))
             logs = []
             for line in p.stdout:
