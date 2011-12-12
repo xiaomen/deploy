@@ -32,7 +32,7 @@ POST http://deploy.xiaom.co/statics/
             data = json.dumps(data)
 
             cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-statics', data, configs]
-            p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
+            p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=open('/dev/null'))
             logs = []
             for line in p.stdout:
                 line = line.strip()
