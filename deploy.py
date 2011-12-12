@@ -9,6 +9,7 @@ from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
 from alloc import get_app_uid
 from syncdb import app_syncdb
+from statics import app_statics
 from dispatch import app_dispatch
 
 web.config.debug = True
@@ -16,6 +17,7 @@ web.config.debug = True
 urls = (
     '/', 'deploy',
     '/syncdb', app_syncdb,
+    '/statics', app_statics,
     '/dispatch', app_dispatch,
 )
 
