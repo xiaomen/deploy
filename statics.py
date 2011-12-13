@@ -37,14 +37,10 @@ POST http://deploy.xiaom.co/statics/
             for line in p.stdout:
                 line = line.strip()
                 logger.debug(line)
-                if verbose:
-                    yield line
+                yield line
 
             ret = p.communicate()
-            if ret[1]:
-                yield ret[1]
-            else:
-                yield 'Mirror succeeded.'
+            print ret
         except:
             logger.exception('error occured.')
             yield 'Mirror failed'
