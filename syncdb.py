@@ -42,17 +42,24 @@ POST http://deploy.xiaom.co/syncdb/
             p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
             logs = []
             for line in p.stdout:
-                line = line.strip()
-                logger.debug(line)
-                if verbose:
-                    logs.append(line)
-            ret = p.communicate()
-            if not is_exist and line:
-                save_app_option(appname, 'mysql', line)
-            logs = logs[:-1]
-            for log in logs:
-                yield '%s\n' % log
-            yield 'Syncdb succeeded.'
+                try:
+                    levelno, line = line.split(':', 1)
+                    levelno = int(levelno)
+                except ValueError:
+                    levelno = logging.DEBUG
+                logs.append((time.time(), line))
+                if levelno >= loglevel:
+                    yield "%d:%s" % (levelno, line)
+
+            if p.wait() == 0:
+                yield "%d:Syncdb succeeded.\n" % (logging.INFO)
+            else:
+                yield "%d:Syncdb failed.  Logs followed.\n\n\n" % (logging.ERROR)
+                for timestamp, line in logs:
+                    yield "%d:%s %s" % (logging.ERROR,
+                                        time.strftime("%H:%M:%S",
+                                                      time.localtime(timestamp)),
+                                        line)
         except:
             logger.exception('error occured.')
             yield 'Syncdb failed'
