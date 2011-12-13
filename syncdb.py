@@ -54,14 +54,14 @@ POST http://deploy.xiaom.co/syncdb/
                 except ValueError:
                     levelno = logging.DEBUG
                 traces.append((time.time(), line))
-                if levelno >= loglevel:
-                    logs.append((levelno, line))
+                logs.append((levelno, line))
 
             if p.wait() == 0:
                 passwd = logs[-1][1]
                 logs = logs[:-1]
-                if verbose:
-                    for log in logs:
+                for log in logs:
+                    logger.log(*log)
+                    if verbose:
                         yield "%d:%s" % log
 
                 if not is_exist:
