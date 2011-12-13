@@ -60,8 +60,9 @@ POST http://deploy.xiaom.co/syncdb/
             if p.wait() == 0:
                 passwd = logs[-1][1]
                 logs = logs[:-1]
-                for log in logs:
-                   yield "%d:%s" % log
+                if verbose:
+                    for log in logs:
+                        yield "%d:%s" % log
 
                 if not is_exist:
                     save_app_option(appname, 'mysql', passwd)
