@@ -29,21 +29,21 @@ POST http://deploy.xiaom.co/statics/
 
             #get app config if not exist will create it
             get_app_uid(appname)
-
             cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-statics', appname, json.dumps(configs)]
+            if verbose:
+                cmd += ['--verbose']
             p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=open('/dev/null'))
-            logs = []
+
             for line in p.stdout:
                 line = line.strip()
                 logger.debug(line)
                 if verbose:
-                    logs.append(line)
+                    yield line
+
             ret = p.communicate()
             if ret[1]:
                 yield ret[1]
             else:
-                for log in logs:
-                    yield '%s\n' % log
                 yield 'Mirror succeeded.'
         except:
             logger.exception('error occured.')
