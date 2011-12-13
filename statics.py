@@ -3,12 +3,11 @@
 
 import web
 import json
+import time
 import logging
 from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
 from alloc import get_app_uid, save_app_option, load_app_option
-
-logger = logging.getLogger(__name__)
 
 urls = (
     '/', 'statics',
@@ -29,20 +28,37 @@ POST http://deploy.xiaom.co/statics/
 
             #get app config if not exist will create it
             get_app_uid(appname)
-            cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-statics', appname, json.dumps(configs)]
-            if verbose:
-                cmd += ['--verbose']
-            p = Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=open('/dev/null'))
-
-            for line in p.stdout:
-                line = line.strip()
-                logger.debug(line)
-                yield line
-
-            ret = p.communicate()
-            print ret
         except:
-            logger.exception('error occured.')
-            yield 'Mirror failed'
+            yield 'Mirror error occured.'
+            return
+
+        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-statics', appname, json.dumps(configs)]
+        if verbose:
+            cmd += ['--verbose']
+            loglevel = logging.DEBUG
+        else:
+            loglevel = logging.INFO
+
+        p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
+        logs = []
+        for line in p.stdout:
+            try:
+                levelno, line = line.split(':', 1)
+                levelno = int(levelno)
+            except ValueError:
+                levelno = logging.DEBUG
+            logs.append((time.time(), line))
+            if levelno >= loglevel:
+                yield "%d:%s" % (levelno, line)
+
+        if p.wait() == 0:
+            yield "%d:Mirror succeeded.\n" % (logging.INFO)
+        else:
+            yield "%d:Mirror failed.  Logs followed.\n\n\n" % (logging.ERROR)
+            for timestamp, line in logs:
+                yield "%d:%s %s" % (logging.ERROR,
+                                    time.strftime("%H:%M:%S",
+                                                  time.localtime(timestamp)),
+                                    line)
 
 app_statics = web.application(urls, locals())
