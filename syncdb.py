@@ -46,21 +46,30 @@ POST http://deploy.xiaom.co/syncdb/
             cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
             p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
             logs = []
+            traces = []
             for line in p.stdout:
                 try:
                     levelno, line = line.split(':', 1)
                     levelno = int(levelno)
                 except ValueError:
                     levelno = logging.DEBUG
-                logs.append((time.time(), line))
+                traces.append((time.time(), line))
                 if levelno >= loglevel:
-                    yield "%d:%s" % (levelno, line)
+                    logs.append((levelno, line))
 
             if p.wait() == 0:
+                passwd = logs[-1][1]
+                logs = logs[:-1]
+                for log in logs:
+                   yield "%d:%s" % log
+
+                if not is_exist:
+                    save_app_option(appname, 'mysql', passwd)
+
                 yield "%d:Syncdb succeeded.\n" % (logging.INFO)
             else:
-                yield "%d:Syncdb failed.  Logs followed.\n\n\n" % (logging.ERROR)
-                for timestamp, line in logs:
+                yield "%d:Syncdb failed.  traces followed.\n\n\n" % (logging.ERROR)
+                for timestamp, line in traces:
                     yield "%d:%s %s" % (logging.ERROR,
                                         time.strftime("%H:%M:%S",
                                                       time.localtime(timestamp)),
