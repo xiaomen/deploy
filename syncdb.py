@@ -38,10 +38,10 @@ POST http://deploy.xiaom.co/syncdb/
                 data['passwd'] = is_exist
 
             data = json.dumps(data)
-            if verbose:
-                loglevel = logging.DEBUG
-            else:
-                loglevel = logging.INFO
+            #if verbose:
+            #    loglevel = logging.DEBUG
+            #else:
+            #    loglevel = logging.INFO
 
             cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
             p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
