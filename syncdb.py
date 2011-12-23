@@ -25,7 +25,6 @@ POST http://deploy.xiaom.co/syncdb/
         try:
             data = json.loads(web.data())
             appname = data['application']
-            verbose = data['verbose']
 
             #get app config if not exist will create it
             get_app_uid(appname)
@@ -38,14 +37,10 @@ POST http://deploy.xiaom.co/syncdb/
                 data['passwd'] = is_exist
 
             data = json.dumps(data)
-            #if verbose:
-            #    loglevel = logging.DEBUG
-            #else:
-            #    loglevel = logging.INFO
 
             cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb', data]
             p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
-            logs = []
+            pre_log = ''
             traces = []
             for line in p.stdout:
                 try:
@@ -54,16 +49,14 @@ POST http://deploy.xiaom.co/syncdb/
                 except ValueError:
                     levelno = logging.DEBUG
                 traces.append((time.time(), line))
-                logs.append((levelno, line))
+                if not pre_log:
+                    pre_log = "%d:%s" % (levelno, line)
+                else:
+                    yield pre_log
+                    pre_log = "%d:%s" % (levelno, line)
 
             if p.wait() == 0:
-                passwd = logs[-1][1]
-                logs = logs[:-1]
-                for log in logs:
-                    logger.log(*log)
-                    if verbose:
-                        yield "%d:%s" % log
-
+                passwd = pre_log.split(':', 1)[1]
                 if not is_exist:
                     save_app_option(appname, 'mysql', passwd)
 

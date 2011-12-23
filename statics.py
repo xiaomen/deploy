@@ -24,7 +24,6 @@ POST http://deploy.xiaom.co/statics/
             data = json.loads(web.data())
             appname = data['application']
             configs = data['configs']
-            verbose = data['verbose']
 
             #get app config if not exist will create it
             get_app_uid(appname)
@@ -33,11 +32,6 @@ POST http://deploy.xiaom.co/statics/
             return
 
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-statics', appname, json.dumps(configs)]
-        if verbose:
-            cmd += ['--verbose']
-            loglevel = logging.DEBUG
-        else:
-            loglevel = logging.INFO
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         logs = []
@@ -48,8 +42,7 @@ POST http://deploy.xiaom.co/statics/
             except ValueError:
                 levelno = logging.DEBUG
             logs.append((time.time(), line))
-            if levelno >= loglevel:
-                yield "%d:%s" % (levelno, line)
+            yield "%d:%s" % (levelno, line)
 
         if p.wait() == 0:
             yield "%d:Mirror succeeded.\n" % (logging.INFO)
