@@ -31,20 +31,14 @@ POST http://deploy.xiaom.co/
         # disable nginx buffering
         web.header('X-Accel-Buffering', 'no')
 
-        i = web.input(verbose=False)
+        i = web.input()
 
         #get app config if not exist will create it
         app_uid = get_app_uid(i.app_name)
 
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid)]
-        if i.verbose:
-            cmd += ['--verbose']
-            yield "%d:%s is serving you\n" % (logging.DEBUG,
-                                              socket.gethostname())
-            loglevel = logging.DEBUG
-        else:
-            loglevel = logging.INFO
+        yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         logs = []
@@ -55,8 +49,7 @@ POST http://deploy.xiaom.co/
             except ValueError:
                 levelno = logging.DEBUG
             logs.append((time.time(), line))
-            if levelno >= loglevel:
-                yield "%d:%s" % (levelno, line)
+            yield "%d:%s" % (levelno, line)
 
         if p.wait() == 0:
             yield "%d:Deploy succeeded.\n" % (logging.INFO)
