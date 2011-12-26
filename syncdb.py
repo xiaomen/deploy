@@ -65,7 +65,7 @@ POST http://deploy.xiaom.co/syncdb/
                         yield "%d:%s" % log
 
                 if not is_exist:
-                    save_app_option(appname, 'mysql', passwd)
+                    save_app_option(appname, 'mysql', passwd.strip())
 
                 yield "%d:Syncdb succeeded.\n" % (logging.INFO)
             else:
