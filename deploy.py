@@ -84,7 +84,7 @@ class dispatch:
 
         # TODO function seperated.
         extend_config = {}
-        config_value = load_app_option(appname, 'mysql')
+        config_value = load_app_option(i.appname, 'mysql')
         if config_value:
             extend_config['mysql'] = config_value
 
