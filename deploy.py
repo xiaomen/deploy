@@ -2,6 +2,7 @@
 
 import socket
 import logging
+import json
 import web
 import time
 from urllib import FancyURLopener, urlencode
@@ -80,6 +81,15 @@ class dispatch:
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid), ]
+
+        # TODO function seperated.
+        extend_config = {}
+        config_value = load_app_option(appname, 'mysql')
+        if config_value:
+            extend_config['mysql'] = config_value
+
+        if extend_config:
+            cmd += ['--app-configs', json.dumps(extend_config)]
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         logs = []
