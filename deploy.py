@@ -99,6 +99,7 @@ def get_servers(appname):
     ret = load_app_option(appname, 'deploy_servers')
     if ret:
         ret = ret.split(',')
+        return ret
     return []
 
 app = web.application(urls, globals())
