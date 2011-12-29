@@ -43,11 +43,11 @@ POST http://deploy.xiaom.co/
         web.header('X-Accel-Buffering', 'no')
 
         i = web.input(fast=False)
-        print web.ctx['host']
         #get app config if not exist will create it
         servers = get_servers(i.app_name)
         yield "%d:%s" % (logging.INFO, render_ok("Application allowed to deploy those servers"))
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
+        servers = escape_servers(servers)
 
         result = {}
         data = {'app_name': i.app_name, 'app_url': i.app_url}
@@ -113,6 +113,14 @@ class dispatch:
                                     time.strftime("%H:%M:%S",
                                                   time.localtime(timestamp)),
                                     line)
+
+def escape_servers(servers):
+    try:
+        this_deploy_server = web.ctx['host'].split('.', 1)[0]
+        servers.remove(this_deploy_server)
+        servers.append(this_deploy_server)
+    finally:
+        return servers
 
 def get_servers(appname):
     ret = load_app_option(appname, 'deploy_servers')
