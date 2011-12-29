@@ -59,9 +59,9 @@ POST http://deploy.xiaom.co/
             for line in iter(f.readline, ''):
                 yield line
             if not any(word in line for word in ['succeeded', 'failed']):
-                result[url] = 'Failed'
+                result[server] = 'Failed'
             else:
-                result[url] = 'Succeeded'
+                result[server] = 'Succeeded'
 
         yield "%d:==========RESULT==========\n" % logging.INFO
         for k, v in result.iteritems():
@@ -69,6 +69,7 @@ POST http://deploy.xiaom.co/
                 yield "%d:%s" % (logging.INFO, render_err("%s %s" % (k, v)))
             else:
                 yield "%d:%s" % (logging.INFO, render_ok("%s %s" % (k, v)))
+        yield "%d:Deploy succeeded.\n" % (logging.INFO)
 
 class dispatch:
     def POST(self):
