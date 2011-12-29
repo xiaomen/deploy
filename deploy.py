@@ -23,13 +23,13 @@ urls = (
 RED = '\x1b[01;31m'
 GREEN = '\x1b[01;32m'
 NORMAL = '\x1b[0m'
-SUFFIX = '.xiaom.co/dispatch'
+SUFFIX = 'http://%s.xiaom.co/dispatch'
 
 def render_ok(msg):
-    return GREEN + msg + NORMAL
+    return GREEN + msg + NORMAL + '\n'
 
 def render_err(msg):
-    return RED + msg + NORMAL
+    return RED + msg + NORMAL + '\n'
 
 class deploy:
     def GET(self):
@@ -44,7 +44,8 @@ POST http://deploy.xiaom.co/
         i = web.input(fast=False)
 
         #get app config if not exist will create it
-        #servers = get_servers(i.app_name)
+        servers = get_servers(i.app_name)
+        print servers
         servers = ['deploy']
 
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
@@ -52,8 +53,7 @@ POST http://deploy.xiaom.co/
         result = {}
         data = {'app_name': i.app_name, 'app_url': i.app_url}
         for server in servers:
-            url = server + SUFFIX
-            print url
+            url = SUFFIX % server
             opener = FancyURLopener()
             f = opener.open(url, urlencode(data))
             line = ''  # to avoid NameError for line if f has no output at all.
