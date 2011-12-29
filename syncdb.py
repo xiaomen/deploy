@@ -29,6 +29,11 @@ POST http://deploy.xiaom.co/syncdb/
             #get app config if not exist will create it
             get_app_uid(appname)
             is_exist = load_app_option(appname, 'mysql')
+            if data.get('passwd'):
+                del data['passwd']
+
+            if is_exist:
+                data['passwd'] = is_exist
 
             data = json.dumps(data)
 
