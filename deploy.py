@@ -110,4 +110,3 @@ def get_servers(appname):
 
 app = web.application(urls, globals())
 wsgi_app = app.wsgifunc()
-class dispatch:
