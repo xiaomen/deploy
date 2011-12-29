@@ -43,7 +43,7 @@ POST http://deploy.xiaom.co/
         web.header('X-Accel-Buffering', 'no')
 
         i = web.input(fast=False)
-
+        print web.ctx['host']
         #get app config if not exist will create it
         servers = get_servers(i.app_name)
         yield "%d:%s" % (logging.INFO, render_ok("Application allowed to deploy those servers"))
