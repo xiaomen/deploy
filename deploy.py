@@ -53,6 +53,7 @@ POST http://deploy.xiaom.co/
         data = {'app_name': i.app_name, 'app_url': i.app_url}
         for server in servers:
             url = server + SUFFIX
+            print url
             opener = FancyURLopener()
             f = opener.open(url, urlencode(data))
             line = ''  # to avoid NameError for line if f has no output at all.
