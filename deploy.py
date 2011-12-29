@@ -46,7 +46,6 @@ POST http://deploy.xiaom.co/
 
         #get app config if not exist will create it
         servers = get_servers(i.app_name)
-        servers = ['deploy']
         yield "%d:%s" % (logging.INFO, render_ok("Application allowed to deploy those servers"))
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
 
