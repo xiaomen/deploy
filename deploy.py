@@ -2,10 +2,9 @@
 
 import socket
 import logging
-import re
 import web
 import time
-
+from urllib import FancyURLopener, urlencode
 from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
 from syncdb import app_syncdb
@@ -18,19 +17,19 @@ urls = (
     '/', 'deploy',
     '/syncdb', app_syncdb,
     '/statics', app_statics,
+    '/dispatch', 'dispatch',
 )
 
-domain_re = r'http://(.*).xiaom.*'
 RED = '\x1b[01;31m'
 GREEN = '\x1b[01;32m'
 NORMAL = '\x1b[0m'
+SUFFIX = '.xiaom.co/dispatch'
 
 def render_ok(msg):
     return GREEN + msg + NORMAL
 
 def render_err(msg):
     return RED + msg + NORMAL
-
 
 class deploy:
     def GET(self):
@@ -45,12 +44,30 @@ POST http://deploy.xiaom.co/
         i = web.input(fast=False)
 
         #get app config if not exist will create it
-        app_uid = get_app_uid(i.app_name)
-        servers = get_servers(i.app_name)
+        #servers = get_servers(i.app_name)
+        servers = ['deploy']
 
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
-        print web.ctx
-        servers.remove(get_this(web.ctx['homedomain']))
+
+        result = {}
+        data = {'app_name': i.app_name, 'app_url': i.app_url}
+        for server in servers:
+            url = server + SUFFIX
+            opener = FancyURLopener()
+            f = opener.open(url, urlencode(data))
+            line = ''  # to avoid NameError for line if f has no output at all.
+            for line in iter(f.readline, ''):
+                yield line
+            if not any(word in line for word in ['succeeded', 'failed']):
+                result[server] = 'Failed'
+            else:
+                result[server] = 'Succeeded'
+
+class dispatch:
+    def POST(self):
+        web.header('X-Accel-Buffering', 'no')
+        i = web.input()
+        app_uid = get_app_uid(i.app_name)
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
@@ -76,12 +93,6 @@ POST http://deploy.xiaom.co/
                                     time.strftime("%H:%M:%S",
                                                   time.localtime(timestamp)),
                                     line)
-
-def get_this(domain):
-    print domain_re
-    print domain
-    m = re.match(domain_re, domain).groups()
-    return m[0]
 
 def get_servers(appname):
     ret = load_app_option(appname, 'deploy_servers')
