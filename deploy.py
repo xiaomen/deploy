@@ -59,11 +59,11 @@ POST http://deploy.xiaom.co/
             for line in iter(f.readline, ''):
                 yield line
             if not any(word in line for word in ['succeeded', 'failed']):
-                result[server] = 'Failed'
+                result[url] = 'Failed'
             else:
-                result[server] = 'Succeeded'
+                result[url] = 'Succeeded'
 
-        yield "%d:==========RESULT==========" % logging.INFO
+        yield "%d:==========RESULT==========\n" % logging.INFO
         for k, v in result.iteritems():
             if v == 'Failed':
                 yield "%d:%s" % (logging.INFO, render_err("%s %s" % (k, v)))
