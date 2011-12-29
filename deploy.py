@@ -77,6 +77,8 @@ POST http://deploy.xiaom.co/
                                     line)
 
 def get_this(domain):
+    print domain_re
+    print domain
     m = re.match(domain_re, domain).groups()
     return m[0]
 
