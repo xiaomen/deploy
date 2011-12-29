@@ -49,6 +49,7 @@ POST http://deploy.xiaom.co/
         servers = get_servers(i.app_name)
 
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
+        print web.ctx
         servers.remove(get_this(web.ctx['homedomain']))
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
