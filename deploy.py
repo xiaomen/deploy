@@ -46,7 +46,7 @@ POST http://deploy.xiaom.co/
 
         #get app config if not exist will create it
         app_uid = get_app_uid(i.app_name)
-        servers = get_servers(app_name)
+        servers = get_servers(i.app_name)
 
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
         servers.remove(get_this(web.ctx['homedomain']))
