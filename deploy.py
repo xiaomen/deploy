@@ -45,9 +45,8 @@ POST http://deploy.xiaom.co/
 
         #get app config if not exist will create it
         servers = get_servers(i.app_name)
-        print servers
         servers = ['deploy']
-
+        yield "%d:%s" % (logging.INFO, render_ok("Application allowed to deploy those servers"))
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
 
         result = {}
@@ -63,6 +62,13 @@ POST http://deploy.xiaom.co/
                 result[server] = 'Failed'
             else:
                 result[server] = 'Succeeded'
+
+        yield "%d:==========RESULT==========" % logging.INFO
+        for k, v in result.iteritems():
+            if v == 'Failed':
+                yield "%d:%s" % (logging.INFO, render_err("%s %s" % (k, v)))
+            else:
+                yield "%d:%s" % (logging.INFO, render_ok("%s %s" % (k, v)))
 
 class dispatch:
     def POST(self):
@@ -104,3 +110,4 @@ def get_servers(appname):
 
 app = web.application(urls, globals())
 wsgi_app = app.wsgifunc()
+class dispatch:
