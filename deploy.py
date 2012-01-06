@@ -35,7 +35,6 @@ def render_err(msg):
 class deploy:
     def GET(self):
         return """\
-<head><meta property="wb:webmaster" content="e37d6e134f48a5c8" /></head>
 POST http://deploy.xiaom.co/
 """
 
