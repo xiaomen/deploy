@@ -10,7 +10,7 @@ from gevsubprocess import GPopen as Popen, PIPE, STDOUT
 
 from syncdb import app_syncdb
 from statics import app_statics
-from alloc import get_app_uid, load_app_option
+from alloc import get_app_uid, load_app_option, save_app_option
 
 web.config.debug = True
 
@@ -44,7 +44,12 @@ POST http://deploy.xiaom.co/
 
         i = web.input(fast=False)
         #get app config if not exist will create it
+        app_uid = get_app_uid(i.app_name)
         servers = get_servers(i.app_name)
+        if not servers:
+            servers = ['deploy']
+            save_app_option(i.app_name, 'deploy_servers', 'deploy')
+
         yield "%d:%s" % (logging.INFO, render_ok("Application allowed to deploy those servers"))
         yield "%d:%s" % (logging.INFO, render_ok(','.join(servers)))
         servers = escape_servers(servers)
