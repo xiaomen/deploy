@@ -6,7 +6,7 @@ import json
 import web
 import time
 from urllib import FancyURLopener, urlencode
-from gevsubprocess import GPopen as Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT
 
 from syncdb import app_syncdb
 from statics import app_statics
@@ -25,6 +25,7 @@ RED = '\x1b[01;31m'
 GREEN = '\x1b[01;32m'
 NORMAL = '\x1b[0m'
 SUFFIX = 'http://%s.xiaom.co/dispatch'
+logger = logging.getLogger(__name__)
 
 def render_ok(msg):
     return GREEN + msg + NORMAL + '\n'
@@ -59,15 +60,16 @@ POST http://deploy.xiaom.co/
         for server in servers:
             url = SUFFIX % server
             try:
-               opener = FancyURLopener()
-               f = opener.open(url, urlencode(data))
-               line = ''  # to avoid NameError for line if f has no output at all.
-               for line in iter(f.readline, ''):
-                   yield line
-               if not any(word in line for word in ['succeeded', 'failed']):
-                   result[server] = 'Failed'
-               else:
-                   result[server] = 'Succeeded'
+                opener = FancyURLopener()
+                f = opener.open(url, urlencode(data))
+                line = ''  # to avoid NameError for line if f has no output at all.
+                for line in iter(f.readline, ''):
+                    logger.debug(line)
+                    yield line
+                if not any(word in line for word in ['succeeded', 'failed']):
+                    result[server] = 'Failed'
+                else:
+                    result[server] = 'Succeeded'
             except Exception, e:
                 yield "%d:%s" % (logging.ERROR, render_err(str(e)))
                 result[server] = 'Failed'
