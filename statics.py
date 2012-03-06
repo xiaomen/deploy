@@ -5,7 +5,7 @@ import web
 import json
 import time
 import logging
-from gevsubprocess import GPopen as Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT
 
 from alloc import get_app_uid, save_app_option, load_app_option
 
