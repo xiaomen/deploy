@@ -91,7 +91,6 @@ class dispatch:
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid), ]
 
-        # TODO function seperated.
         extend_config = {}
         config_value = load_app_option(i.app_name, 'mysql')
         if config_value:
