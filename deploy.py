@@ -8,7 +8,6 @@ import logging
 from urllib import FancyURLopener, urlencode
 from subprocess import Popen, PIPE, STDOUT
 
-from gevent import Timeout
 from syncdb import app_syncdb
 from statics import app_statics
 from alloc import get_app_uid, load_app_option, save_app_option
@@ -64,10 +63,9 @@ POST http://deploy.xiaom.co/
                 opener = FancyURLopener()
                 f = opener.open(url, urlencode(data))
                 line = ''  # to avoid NameError for line if f has no output at all.
-                with Timeout(20):
-                    for line in iter(f.readline, ''):
-                        logger.info(line)
-                        yield line
+                for line in iter(f.readline, ''):
+                    logger.info(line)
+                    yield line
                 if not any(word in line for word in ['succeeded', 'failed']):
                     result[server] = 'Failed'
                 else:
