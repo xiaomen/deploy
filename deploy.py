@@ -64,7 +64,7 @@ POST http://deploy.xiaom.co/
                 f = opener.open(url, urlencode(data))
                 line = ''  # to avoid NameError for line if f has no output at all.
                 for line in iter(f.readline, ''):
-                    logger.debug(line)
+                    logger.info(line)
                     yield line
                 if not any(word in line for word in ['succeeded', 'failed']):
                     result[server] = 'Failed'
