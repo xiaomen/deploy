@@ -2,6 +2,7 @@ application: deploy
 version: 1
 runtime: python
 api_version: 1
+sentry_dsn: http://16543c7559ec4506bb68a9cfac207e75:a174f49079224bb6811d4e5ec0d43a5d@deploy.xiaom.co:9000/3
 
 handlers:
 - url: /.*
