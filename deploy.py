@@ -89,8 +89,10 @@ class dispatch:
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
 
-        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
-               i.app_url, str(app_uid), ]
+        appusr = 'sheep_%s' % i.app_name
+        ensure_app_environ(appusr, str(app_uid))
+        cmd = ['sudo', '-u', 'root', 'sudo', '-u', appusr, '/usr/local/bin/farm-deploy', i.app_name,
+               i.app_url]
 
         extend_config = {}
         config_value = load_app_option(i.app_name, 'mysql')
@@ -120,6 +122,11 @@ class dispatch:
                                     time.strftime("%H:%M:%S",
                                                   time.localtime(timestamp)),
                                     line)
+
+def ensure_app_environ(appusr, appuid):
+    logger.info("setup app environ...")
+    call(['sudo', 'useradd', appusr, '-d', '/dev/null', '-s', '/sbin/nologin', '-u', appuid])
+    call(['sudo', 'usermod', '-a', '-G', 'sheep', appusr])
 
 def escape_servers(servers):
     try:
