@@ -89,10 +89,10 @@ class dispatch:
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
 
-        appusr = 'sheep_%s' % i.app_name
-        ensure_app_environ(appusr, str(app_uid))
+        #appusr = 'sheep_%s' % i.app_name
+        #ensure_app_environ(appusr, str(app_uid))
         cmd = ['sudo', '-u', 'root', 'sudo', '-u', appusr, '/usr/local/bin/farm-deploy', i.app_name,
-               i.app_url]
+               i.app_url, str(app_uid),]
 
         extend_config = {}
         config_value = load_app_option(i.app_name, 'mysql')
