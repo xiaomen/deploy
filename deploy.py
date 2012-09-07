@@ -88,8 +88,9 @@ class dispatch:
         app_uid = get_app_uid(i.app_name)
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
-        appusr = ensure_app_environ(i.app_name, app_uid)
-        cmd = ['sudo', '-u', 'root', 'sudo', '-u', appusr, '/usr/local/bin/farm-deploy', i.app_name,
+
+        ensure_app_environ(i.app_name, app_uid)
+        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url]
 
         extend_config = {}
@@ -124,8 +125,8 @@ class dispatch:
 def ensure_app_environ(appname, appuid):
     logger.info("setup app %s environ..." % appname)
     appusr = 'sheep_%s' % appname
-    call(['sudo', 'useradd', appusr, '-d', '/dev/null', '-s', '/sbin/nologin', '-u', appuid])
-    return appusr
+    call(['sudo', '-u', 'sheep', 'sudo', '-u', 'root', \
+            'useradd', appusr, '-d', '/dev/null', '-s', '/sbin/nologin', '-u', appuid])
 
 def escape_servers(servers):
     try:
