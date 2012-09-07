@@ -91,7 +91,7 @@ class dispatch:
 
         #appusr = 'sheep_%s' % i.app_name
         #ensure_app_environ(appusr, str(app_uid))
-        cmd = ['sudo', '-u', 'root', 'sudo', '-u', appusr, '/usr/local/bin/farm-deploy', i.app_name,
+        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid),]
 
         extend_config = {}
