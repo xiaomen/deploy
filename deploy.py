@@ -6,7 +6,7 @@ import json
 import socket
 import logging
 from urllib import FancyURLopener, urlencode
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT, call
 
 from syncdb import app_syncdb
 from statics import app_statics
@@ -88,8 +88,9 @@ class dispatch:
         app_uid = get_app_uid(i.app_name)
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
-        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
-               i.app_url, str(app_uid), ]
+        appusr = ensure_app_environ(i.app_name, app_uid)
+        cmd = ['sudo', '-u', 'root', 'sudo', '-u', appusr, '/usr/local/bin/farm-deploy', i.app_name,
+               i.app_url]
 
         extend_config = {}
         config_value = load_app_option(i.app_name, 'mysql')
@@ -119,6 +120,12 @@ class dispatch:
                                     time.strftime("%H:%M:%S",
                                                   time.localtime(timestamp)),
                                     line)
+
+def ensure_app_environ(appname, appuid):
+    logger.info("setup app %s environ..." % appname)
+    appusr = 'sheep_%s' % appname
+    call(['sudo', 'useradd', appusr, '-d', '/dev/null', '-s', '/sbin/nologin', '-u', appuid])
+    return appusr
 
 def escape_servers(servers):
     try:
