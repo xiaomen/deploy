@@ -90,7 +90,8 @@ class dispatch:
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
 
         cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-config', i.app_name, str(app_uid)]
-        for line in run_command(cmd):
+        p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
+        for line in run_command(p):
             yield line
 
         cmd = ['sudo', '-u', 'sheep', \
@@ -107,8 +108,13 @@ class dispatch:
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         logs = []
-        for line in run_command(cmd):
+        for line in run_command(p):
             logs.append((time.time(), line))
+            yield line
+
+        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-config', i.app_name, '-1']
+        p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
+        for line in run_command(p):
             yield line
 
         if p.wait() == 0:
@@ -121,8 +127,7 @@ class dispatch:
                                                   time.localtime(timestamp)),
                                     line)
 
-def run_command(cmd):
-    p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
+def run_command(p):
     for line in p.stdout:
         try:
             levelno, line = line.split(':', 1)
