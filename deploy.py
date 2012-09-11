@@ -89,14 +89,8 @@ class dispatch:
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
 
-        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-config', i.app_name, str(app_uid)]
-        p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
-        for line in run_command(p):
-            yield line
-
-        cmd = ['sudo', '-u', 'sheep', \
-                'sudo', '-u', 'root', \
-                'sudo', '-u', 'sheep_%s' % i.app_name, '/usr/local/bin/farm-deploy', i.app_name, i.app_url]
+        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
+               i.app_url, str(app_uid),]
 
         extend_config = {}
         config_value = load_app_option(i.app_name, 'mysql')
@@ -108,14 +102,14 @@ class dispatch:
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
         logs = []
-        for line in run_command(p):
+        for line in p.stdout:
+            try:
+                levelno, line = line.split(':', 1)
+                levelno = int(levelno)
+            except ValueError:
+                levelno = logging.DEBUG
             logs.append((time.time(), line))
-            yield line
-
-        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-config', i.app_name, '-1']
-        p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
-        for line in run_command(p):
-            yield line
+            yield "%d:%s" % (levelno, line)
 
         if p.wait() == 0:
             yield "%d:Deploy succeeded.\n" % (logging.INFO)
@@ -126,15 +120,6 @@ class dispatch:
                                     time.strftime("%H:%M:%S",
                                                   time.localtime(timestamp)),
                                     line)
-
-def run_command(p):
-    for line in p.stdout:
-        try:
-            levelno, line = line.split(':', 1)
-            levelno = int(levelno)
-        except ValueError:
-            levelno = logging.DEBUG
-        yield "%d:%s" % (levelno, line)
 
 def ensure_app_environ(appusr, appuid):
     logger.info("setup app environ...")
