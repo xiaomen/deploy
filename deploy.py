@@ -101,25 +101,8 @@ class dispatch:
             cmd += ['--app-configs', json.dumps(extend_config)]
 
         p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=open('/dev/null'))
-        logs = []
         for line in p.stdout:
-            try:
-                levelno, line = line.split(':', 1)
-                levelno = int(levelno)
-            except ValueError:
-                levelno = logging.DEBUG
-            logs.append((time.time(), line))
-            yield "%d:%s" % (levelno, line)
-
-        if p.wait() == 0:
-            yield "%d:Deploy succeeded.\n" % (logging.INFO)
-        else:
-            yield "%d:Deploy failed.  Logs followed.\n\n\n" % (logging.ERROR)
-            for timestamp, line in logs:
-                yield "%d:%s %s" % (logging.ERROR,
-                                    time.strftime("%H:%M:%S",
-                                                  time.localtime(timestamp)),
-                                    line)
+            yield line
 
 def ensure_app_environ(appusr, appuid):
     logger.info("setup app environ...")
