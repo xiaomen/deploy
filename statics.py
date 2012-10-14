@@ -1,7 +1,6 @@
 #!/opt/local/bin/python2.7
 #coding:utf-8
 
-import os
 import web
 import json
 import time
@@ -45,7 +44,7 @@ POST http://deploy.xiaom.co/statics/
             logs.append((time.time(), line))
             yield "%d:%s" % (levelno, line)
 
-        if os.wait()[1] == 0:
+        if p.wait() == 0:
             yield "%d:Mirror succeeded.\n" % (logging.INFO)
         else:
             yield "%d:Mirror failed.  Logs followed.\n\n\n" % (logging.ERROR)
