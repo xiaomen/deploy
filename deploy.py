@@ -87,7 +87,7 @@ class dispatch:
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
 
-        cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-deploy', i.app_name,
+        cmd = ['sudo', '-u', 'sheep', 'LD_LIBRARY_PATH=/data/farm/venv/lib', '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid),]
 
         extend_config = {}
