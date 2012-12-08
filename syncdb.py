@@ -36,7 +36,7 @@ POST http://deploy.xiaom.co/syncdb/
                 data['passwd'] = is_exist
 
             data = json.dumps(data)
-            cmd = ['sudo', '-u', 'sheep', '/usr/local/bin/farm-syncdb']
+            cmd = ['sudo', '-u', 'sheep', 'LD_LIBRARY_PATH=/data/farm/venv/lib', '/usr/local/bin/farm-syncdb']
             p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=PIPE)
             p.stdin.write(data)
             p.stdin.close()
