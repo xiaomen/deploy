@@ -1,7 +1,6 @@
 #coding:utf-8
 
 import web
-import time
 import json
 import socket
 import logging
@@ -45,7 +44,6 @@ POST http://deploy.xiaom.co/
 
         i = web.input(fast=False)
         #get app config if not exist will create it
-        app_uid = get_app_uid(i.app_name)
         servers = get_servers(i.app_name)
         if not servers:
             servers = ['deploy2']
