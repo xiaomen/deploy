@@ -7,7 +7,7 @@ import time
 import logging
 from subprocess import Popen, PIPE, STDOUT
 
-from alloc import get_app_uid, save_app_option, load_app_option
+from alloc import get_app_uid
 
 urls = (
     '/', 'statics',
