@@ -46,7 +46,7 @@ POST http://deploy.xiaom.co/
         #get app config if not exist will create it
         servers = get_servers(i.app_name)
         if not servers:
-            servers = ['deploy2']
+            servers = ['deploy']
             save_app_option(i.app_name, 'deploy_servers', 'deploy2')
 
         yield "%d:%s" % (logging.INFO, render_ok("Application allowed to deploy those servers"))
