@@ -8,6 +8,7 @@ import logging
 from subprocess import Popen, PIPE, STDOUT
 
 from alloc import get_app_uid, save_app_option, load_app_option
+from farm.config import DEFALUT_LIB_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ POST http://deploy.xiaom.co/syncdb/
                 data['passwd'] = is_exist
 
             data = json.dumps(data)
-            cmd = ['sudo', '-u', 'sheep', 'LD_LIBRARY_PATH=/data/farm/venv/lib', '/usr/local/bin/farm-syncdb']
+            cmd = ['sudo', '-u', 'sheep', 'LD_LIBRARY_PATH=%s' % DEFALUT_LIB_DIR, '/usr/local/bin/farm-syncdb']
             p = Popen(cmd, stdout=PIPE, stderr=STDOUT, stdin=PIPE)
             p.stdin.write(data)
             p.stdin.close()

@@ -10,6 +10,7 @@ from subprocess import Popen, PIPE, STDOUT, call
 from syncdb import app_syncdb
 from statics import app_statics
 from alloc import get_app_uid, load_app_option, save_app_option
+from farm.config import DEFAULT_LIB_DIR
 
 web.config.debug = True
 
@@ -87,7 +88,7 @@ class dispatch:
 
         yield "%d:%s is serving you\n" % (logging.DEBUG, socket.gethostname())
 
-        cmd = ['sudo', '-u', 'sheep', 'LD_LIBRARY_PATH=/data/farm/venv/lib', '/usr/local/bin/farm-deploy', i.app_name,
+        cmd = ['sudo', '-u', 'sheep', 'LD_LIBRARY_PATH=%s' % DEFAULT_LIB_DIR, '/usr/local/bin/farm-deploy', i.app_name,
                i.app_url, str(app_uid),]
 
         extend_config = {}
