@@ -8,7 +8,8 @@ import logging
 from subprocess import Popen, PIPE, STDOUT
 
 from alloc import get_app_uid, save_app_option, load_app_option
-from farm.config import DEFALUT_LIB_DIR
+
+DEFALUT_LIB_DIR = '/data/farm/lib'
 
 logger = logging.getLogger(__name__)
 

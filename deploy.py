@@ -10,7 +10,8 @@ from subprocess import Popen, PIPE, STDOUT, call
 from syncdb import app_syncdb
 from statics import app_statics
 from alloc import get_app_uid, load_app_option, save_app_option
-from farm.config import DEFAULT_LIB_DIR
+
+DEFAULT_LIB_DIR = '/data/farm/lib'
 
 web.config.debug = True
 
